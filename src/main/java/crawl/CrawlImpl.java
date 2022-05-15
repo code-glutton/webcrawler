@@ -11,14 +11,34 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-public class CrawlImpl implements Crawl{
+
+public class CrawlImpl extends Thread implements Crawl{
+    private String first_link;
+    private Thread thread;
+
+    public CrawlImpl(String link) {
+        this.first_link = link;
+
+    }
+
+    @Override
+    public void run() {
+        try {
+            crawl(3,first_link);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private HashSet<Element> linkItems = new HashSet<>();
+
     @Override
     public Document connect(String url) throws IOException {
         try {
             Connection con = Jsoup.connect(url);
             Document doc = con.get();
             if (con.response().statusCode() == 200){
-                System.out.println("yes");
+                System.out.println(doc.title());
                 return doc;
             }
         }catch(Exception ex){
@@ -28,7 +48,8 @@ public class CrawlImpl implements Crawl{
     }
 
     @Override
-    public String crawl(HashSet<Element> linkItems,int depth,String url) throws Exception {
+    public HashSet<Element> crawl(int depth,String url) throws Exception {
+
         if(depth != 1){
             Document document = connect(url);
             if(!Objects.isNull(document)){
@@ -38,7 +59,8 @@ public class CrawlImpl implements Crawl{
                         linkItems.add(element);
                         int deep = depth - 1;
                         System.out.println(link + " " + deep);
-                        crawl(linkItems,deep,link);
+                        System.out.println();
+                        crawl(deep,link);
                     }
                 }
             }
@@ -46,6 +68,6 @@ public class CrawlImpl implements Crawl{
 
         System.out.println("sucker"+depth);
 
-        return "sucker";
+        return linkItems;
     }
 }

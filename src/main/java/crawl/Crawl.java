@@ -8,6 +8,6 @@ import java.util.HashSet;
 
 public interface Crawl {
     Document connect(String url) throws IOException;
-    String crawl(HashSet<Element> linkItems,int depth,String url) throws Exception;
+   HashSet<Element> crawl(int depth,String url) throws Exception;
 
 }
